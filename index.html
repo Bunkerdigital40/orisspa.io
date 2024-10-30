@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Juego de la Ruleta de Premios</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f3f4f6;
+            font-family: Arial, sans-serif;
+            -webkit-tap-highlight-color: rgba(0,0,0,0); /* Elimina el resaltado al hacer clic en iOS */
+        }
+
+        .game-container {
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #roulette {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            border-radius: 50%;
+            border: 10px solid #ffcc00;
+            position: relative;
+            background: conic-gradient(
+                #ff9999 0% 25%, 
+                #99ccff 25% 50%, 
+                #99ff99 50% 75%, 
+                #ffcc66 75% 100%
+            );
+            transition: transform 4s ease-out;
+        }
+
+        #start-game {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        #start-game:active {
+            background-color: #0056b3; /* Añadir feedback al hacer clic en el botón en móviles */
+        }
+
+        #result-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            border-radius: 10px;
+            width: 80%;
+            display: none; /* Ocultar hasta mostrar el resultado */
+        }
+
+        #coupon-result {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 20px;
+            }
+
+            #roulette {
+                width: 150px;
+                height: 150px;
+            }
+
+            #start-game {
+                font-size: 16px;
+                padding: 8px 16px;
+            }
+
+            #coupon-result {
+                font-size: 20px;
+            }
+        }
+
+        /* Para eliminar problemas de zoom en botones en dispositivos iPhone */
+        input, button, select, textarea {
+            font-size: 16px; /* iOS aumenta el tamaño de fuente si es menor a 16px */
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>¡Haz clic para girar la ruleta de premios!</h1>
+        <div id="roulette" class="roulette"></div>
+        <button id="start-game">Iniciar Juego</button>
+        <div id="result-popup">
+            <p id="coupon-result"></p>
+        </div>
+    </div>
+    <script>
+        const startGameButton = document.getElementById('start-game');
+        const roulette = document.getElementById('roulette');
+        const couponResult = document.getElementById('coupon-result');
+        const resultPopup = document.getElementById('result-popup');
+
+        let isSpinning = false;
+
+        startGameButton.addEventListener('click', startGame);
+
+        function startGame() {
+            if (isSpinning) return; // Evitar que se haga clic mientras la ruleta está girando
+
+            isSpinning = true;
+            startGameButton.style.display = 'none';
+
+            // Girar la ruleta
+            const randomDegrees = Math.floor(Math.random() * 360) + 720; // Gira entre 720 y 1080 grados
+            roulette.style.transform = `rotate(${randomDegrees}deg)`;
+
+            setTimeout(() => {
+                showResult();
+                isSpinning = false;
+                startGameButton.style.display = 'inline-block'; // Volver a mostrar el botón de iniciar juego
+            }, 4000); // 4 segundos para que termine la animación de giro
+        }
+
+        function showResult() {
+            const coupons = [
+                "5% de descuento", 
+                "10% de descuento", 
+                "¡Bonus sorpresa!", 
+                "Upps Lo siento: Vuelve a participar recuerda visitar a Ori's Spa"
+            ];
+            const randomCoupon = coupons[Math.floor(Math.random() * coupons.length)];
+
+            couponResult.textContent = (randomCoupon.includes("Vuelve a participar"))
+                ? randomCoupon
+                : "Has ganado: " + randomCoupon;
+
+            resultPopup.style.display = 'block'; // Mostrar el popup con el resultado
+        }
+
+        startGameButton.addEventListener('click', () => {
+            resultPopup.style.display = 'none'; // Ocultar el resultado cuando se reinicia
+        });
+    </script>
+</body>
+</html>
